@@ -1,15 +1,20 @@
 import Head from "next/head";
 import { api } from "~/utils/api";
 import Input from "~/components/Input";
+import { useState } from "react";
 
 export default function Home() {
-  const hello = api.post.hello.useQuery({ text: "from tRPC" });
+  const post = api.postApi.postSample.useMutation();
 
+  const [inputs, setInputs] = useState({ name: "", email: "", age: "" });
   const getInputData = (event: React.ChangeEvent<HTMLInputElement>) => {
-    let{name, value} = event.target
-    let u = {[name]: value}
+    let { name, value } = event.target;
+    let u = { [name]: value };
+    setInputs((prev) => ({ ...prev, ...u }));
   };
-
+  const sendInput = () => {
+    post.mutate(inputs);
+  };
   return (
     <>
       <Head>
@@ -36,7 +41,9 @@ export default function Home() {
           onChange={getInputData}
           name="age"
         />
-        <button className="btn btn-primary mt-3">Add Data</button>
+        <button className="btn btn-primary mt-3" onClick={sendInput}>
+          Add Data
+        </button>
       </main>
     </>
   );
